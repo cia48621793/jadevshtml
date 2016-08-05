@@ -1,0 +1,15 @@
+<!DOCTYPE html><html lang=en><head><meta charset=UTF-8><meta http-equiv=X-UA-Compatible content="IE=Edge"><meta name=viewport content="width=device-width, initial-scale=1"><link rel=stylesheet href=dist.css></head><body><script src=dist.js></script><script src=https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.4/ace.js></script><app-init></app-init><script>
+        riot.mixin({
+            init: function() {
+                x18n.on('lang:change', this.update);
+                bindTag(this);
+                this.mixin('ikki');
+                this.on("updated", componentHandler.upgradeAllRegistered);
+            }
+        });
+
+        riot.compile(function() {
+            riot.tags = riot.mount('*');
+            componentHandler.upgradeAllRegistered();
+        })
+    </script></body></html>
