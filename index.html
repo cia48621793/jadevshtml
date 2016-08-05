@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- build:css dist.css -->
+    <link rel="stylesheet" href="assets/css/core/normalize.css" >
+    <link rel="stylesheet" href="assets/css/core/pace.css">
+    <link rel="stylesheet" href="assets/css/icon.css">
+    <link rel="stylesheet" href="assets/css/material.min.css">
+
+    <link rel="stylesheet" href="assets/css/toastr.min.css">
+    <link rel="stylesheet" href="assets/semantic/semantic.min.css">
+    <!-- endbuild -->
+</head>
+
+<body>
+    <!-- build:js dist.js -->
+    <script src="assets/js/core/pace.js"></script>
+    <script src="assets/js/core/lodash.min.js"></script>
+    <script src="assets/js/core/riot+compiler.min.js"></script>
+
+    <script src="assets/js/core/jquery-3.1.0.min.js"></script>
+    <script src="assets/js/core/jquery-migrate-3.0.0.min.js"></script>
+
+    <script src="assets/js/core/x18n.js"></script>
+    <script src="assets/js/core/bind-tags.js"></script>
+    <script src="assets/js/core/ikki.js"></script>
+    <script src="assets/js/core/is.js"></script>
+
+    <script src="assets/js/material.min.js"></script>
+    <script src="assets/js/he.js"></script>
+    <script src="assets/js/html2jade.browserify.js"></script>
+    <script src="assets/js/toastr.min.js"></script>
+    <script src="assets/js/jade.min.js"></script>
+
+    <script src="api.js"></script>
+    <script src="i18n.js"></script>
+
+    <!-- @if true -->
+    <script src="tags/app-init.js"></script>
+    <!-- @endif -->
+
+    <!-- endbuild -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.4/ace.js"></script>
+
+    <!-- @if false -->
+    <script src="assets/js/typescript.min.js"></script>
+    <script src="assets/js/jade.min.js"></script>
+    <script>riot.parsers.js.es6 = riot.parsers.js.babel = riot.parsers.js.typescript = riot.parsers.js.javascript = ts.transpile;</script>
+    <script type="riot/tag" template="jade" src="tags/app-init.jade"></script>
+    <!-- @endif -->
+
+    <app-init></app-init>
+
+    <script>
+        riot.mixin({
+            init: function() {
+                x18n.on('lang:change', this.update);
+                bindTag(this);
+                this.mixin('ikki');
+                this.on("updated", componentHandler.upgradeAllRegistered);
+            }
+        });
+
+        riot.compile(function() {
+            riot.tags = riot.mount('*');
+            componentHandler.upgradeAllRegistered();
+        })
+    </script>
+</body>
+</html>
