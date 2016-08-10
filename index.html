@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang=en><head><meta charset=UTF-8><meta http-equiv=X-UA-Compatible content="IE=Edge"><meta name=viewport content="width=device-width, initial-scale=1"><link rel=stylesheet href=dist.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.min.css></head><body><script src=dist.js></script><script src=https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.4/ace.js></script><a class=github-fork-ribbon href=https://github.com/cia48621793/jadevshtml title="Fork me on GitHub">Fork me on GitHub</a><app-init></app-init><script>
+<!DOCTYPE html><html lang=en><head><meta charset=UTF-8><meta http-equiv=X-UA-Compatible content="IE=Edge"><meta name=viewport content="width=device-width, initial-scale=1"><title>Jade vs HTML</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.min.css><link rel=stylesheet href=dist.css></head><body><script src=dist.js></script><script src=https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.4/ace.js></script><a class=github-fork-ribbon href=https://github.com/cia48621793/jadevshtml title="Fork me on GitHub">Fork me on GitHub</a><app-init></app-init><script>
         riot.mixin({
             init: function() {
                 x18n.on('lang:change', this.update);
@@ -11,5 +11,6 @@
         riot.compile(function() {
             riot.tags = riot.mount('*');
             componentHandler.upgradeAllRegistered();
+            riot.route.start(true)
         })
     </script></body></html>
