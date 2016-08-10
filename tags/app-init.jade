@@ -1,4 +1,5 @@
 app-init
+
     mixin credits
         a(href="https://github.com/donpark/html2jade")
             |  html2jade by donpark
@@ -48,6 +49,8 @@ app-init
         header.mdl-layout__header
             .mdl-layout__header-row
                 span.mdl-layout-title HTML vs Jade
+                button.mdl-button.mdl-js-button.mdl-button--raised(onclick="{fn.onSaveState}", style="margin-left: 32px")
+                    | Save State
         .mdl-layout__drawer
             span.mdl-layout-title#options Options
             nav.mdl-navigation
@@ -62,10 +65,9 @@ app-init
 
 
         main.mdl-layout__content
-            #selected Currently Selected: {obj.selected_tab}
+            i#selected Currently Selected: {obj.selected_tab}
             .mdl-grid
                 .mdl-cell.mdl-cell--6-col
-
                     #editor_html
                 .mdl-cell.mdl-cell--6-col
                     #editor_jade
@@ -104,11 +106,67 @@ app-init
         var self = this;
         self.obj = {
             selected_tab: "html",
-            syntax_error: false,
+            selected_value: "",
         }
-        self.bind('obj', self.obj);
+
+        riot.route('/', function() {
+            self.ace_editor_html.setValue(
+                    "<h1>Hellooooooooo!</h1>\n" +
+                    "<h2>This is an automatically inserted example.</h2>\n" +
+                    "<h3>You should be able to see this example be compiled to Jade on the right panel(or decompiled to the left).</h3>\n" +
+                    "<h4>This single-page-app will compile HTML to Jade (and vice versa) on-the-fly.</h4>\n" +
+                    "<h5>This is just an alpha prototype version, so I hope in the future we will have more features.</h5>\n" +
+                    "<h6>Finally, enjoy your time hacking this out! Thank you for using this app.</h6>\n" +
+                    "\n" +
+                    "<div>\n\t<div>\n\t\t<div>\n\t\t\t<div>\n\t\t\t\t" +
+                    "<p>Nesting Example</p>\n" +
+                    "\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>\n\n" +
+                    '<table style="width:100%">\n' +
+                    '    <tr>\n' +
+                    '        <th>Name</th>\n' +
+                    '        <th>Age</th>\n' +
+                    '    </tr>\n\n' +
+                    '    <tr>\n' +
+                    '        <td>Alice</td>\n' +
+                    '        <td>18 Years Old</td>\n' +
+                    '    </tr>\n' +
+                    '    <tr>\n' +
+                    '        <td>Bob</td>\n' +
+                    '        <td>10 Years Old</td>\n' +
+                    '    </tr>\n' +
+                    '    <tr>\n' +
+                    '        <td>Charile</td>\n' +
+                    '        <td>30 Years Old</td>\n' +
+                    '    </tr>\n' +
+                    '    <tr>\n' +
+                    '        <td>Dave</td>\n' +
+                    '        <td>26 Years Old</td>\n' +
+                    '    </tr>\n' +
+                    '</table>\n\n' +
+                    '<login>\n' +
+                    '    <form onsubmit="{ login }">\n' +
+                    '        <input name="username" type="text" placeholder="username">\n' +
+                    '        <input name="password" type="password" placeholder="password">\n' +
+                    '    </form>\n' +
+                    '</login>'
+            );
+            self.update();
+        })
+
+        riot.route('/state/*', function (state) {
+            self.obj = JSON.parse(atob(state))
+            if (self.obj.selected_tab === 'html') {
+                self.ace_editor_html.setValue(self.obj.selected_value);
+            } else if (self.obj.selected_tab === 'jade') {
+                self.ace_editor_jade.setValue(self.obj.selected_value);
+            }
+
+            self.fn.refreshEditors();
+            self.update();
+        })
 
         self.on("mount", function() {
+
             toastr.options = {
                 "closeButton": true,
                 "debug": false,
@@ -149,13 +207,6 @@ app-init
             self.ace_editor_html.getSession().setTabSize(2);
             self.ace_editor_html.getSession().setUseWorker(true);
             self.ace_editor_html.getSession().setUseWrapMode(true);
-            self.ace_editor_html.getSession().on('change', function (e) {
-                self.fn.updateHtmlToJade();
-            })
-            self.ace_editor_html.on('focus', function (e) {
-                self.obj.selected_tab = "html";
-            })
-
 
             self.ace_editor_jade = ace.edit("editor_jade");
             self.ace_editor_jade.$blockScrolling = Infinity;
@@ -164,22 +215,33 @@ app-init
             self.ace_editor_jade.getSession().setTabSize(2);
             self.ace_editor_jade.getSession().setUseWorker(true);
             self.ace_editor_jade.getSession().setUseWrapMode(true);
-            self.ace_editor_jade.getSession().on('change', function (e) {
-                self.fn.updateJadeToHtml();
-            });
-            self.ace_editor_jade.on('focus', function (e) {
-                self.obj.selected_tab = "jade";
+
+            self.ace_editor_html.getSession().on('change', function (e) {
+                if (self.obj.selected_tab === 'html') {
+                    self.obj.selected_value = self.ace_editor_html.getValue();
+                    self.fn.updateHtmlToJade();
+                }
             })
 
-            self.ace_editor_html.setValue(
-                "<h1>Hellooooooooo!</h1>\n" +
-                "<h2>This is an automatically inserted example.</h2>\n" +
-                "<h3>You should be able to see this example be compiled to Jade on the right panel(or decompiled to the left).</h3>\n" +
-                "<h4>This single-page-app will compile HTML to Jade (and vice versa) on-the-fly.</h4>\n" +
-                "<h5>This is just an alpha prototype version, so I hope in the future we will have more features.</h5>\n"+
-                "<h6>Finally, enjoy your time hacking this out! Thank you for using this app.</h6>"
-            );
+            self.ace_editor_html.on('focus', function (e) {
+                self.obj.selected_tab = 'html';
+                self.obj.selected_value = self.ace_editor_html.getValue();
+                self.update();
+            })
 
+            self.ace_editor_jade.getSession().on('change', function (e) {
+                if (self.obj.selected_tab === 'jade') {
+                    self.obj.selected_value = self.ace_editor_jade.getValue();
+                    self.fn.updateJadeToHtml();
+                    self.update();
+                }
+            });
+
+            self.ace_editor_jade.on('focus', function (e) {
+                self.obj.selected_tab = "jade";
+                self.obj.selected_value = self.ace_editor_jade.getValue();
+                self.update();
+            })
         });
 
         self.fn = new class {
@@ -188,10 +250,10 @@ app-init
                     return;
                 }
 
-                if (self.ace_editor_html.getValue() === '') {
+                if (self.obj.selected_value === '') {
                     self.ace_editor_jade.setValue('');
                 } else {
-                    html2jade.convertHtml(self.ace_editor_html.getValue(), {
+                    html2jade.convertHtml(self.obj.selected_value, {
                         noemptypipe: self.option_empty_pipe.checked,
                         donotencode: self.option_encode_entities.checked,
                         bodyless: self.option_body_less.checked,
@@ -210,10 +272,10 @@ app-init
                 }
 
                 try {
-                    if (self.ace_editor_jade.getValue() === '') {
+                    if (self.obj.selected_value === '') {
                         self.ace_editor_html.setValue('');
                     } else {
-                        self.ace_editor_html.setValue(jade.render(self.ace_editor_jade.getValue(), {
+                        self.ace_editor_html.setValue(jade.render(self.obj.selected_value, {
                             pretty: self.option_pretty_html.checked,
                         }).trim());
                     }
@@ -229,4 +291,11 @@ app-init
                 self.fn.updateHtmlToJade();
                 self.fn.updateJadeToHtml();
             }
+
+            onSaveState() {
+                var serialized = btoa(JSON.stringify(self.obj));
+                riot.route('state/' + serialized)
+                self.update();
+            }
+
         }();

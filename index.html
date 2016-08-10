@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jade vs HTML</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.min.css" />
     <!-- build:css dist.css -->
     <link rel="stylesheet" href="assets/css/core/normalize.css" >
     <link rel="stylesheet" href="assets/css/core/pace.css">
@@ -14,8 +16,6 @@
     <link rel="stylesheet" href="assets/css/toastr.min.css">
     <link rel="stylesheet" href="assets/semantic/semantic.min.css">
     <!-- endbuild -->
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.min.css" />
 </head>
 
 <body>
@@ -74,6 +74,7 @@
         riot.compile(function() {
             riot.tags = riot.mount('*');
             componentHandler.upgradeAllRegistered();
+            riot.route.start(true)
         })
     </script>
 </body>
